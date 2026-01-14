@@ -39,7 +39,7 @@ A digital twin–based traffic simulator that enables:
 ### Landing Page
 ![Landing Page](s)
 ### Simulator Dashboard
-![Simulator Dashboard](Screenshots)
+![Simulator Dashboard](https://github.com/piyush1910dtu-dot/disha-MARG/blob/52d9504e011896fc3b7dade47271ffa8dafa8c3d/Screenshots/Simulation%20log.png)
 ### Strategy Memory
 ![Strategy Memory](Screenshots)
 
