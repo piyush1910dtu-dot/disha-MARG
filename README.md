@@ -41,7 +41,7 @@ A digital twin–based traffic simulator that enables:
 ### Simulator Dashboard
 ![Simulator Dashboard](https://github.com/piyush1910dtu-dot/disha-MARG/blob/52d9504e011896fc3b7dade47271ffa8dafa8c3d/Screenshots/Simulation%20log.png)
 ### Strategy Memory
-![Strategy Memory](Screenshots)
+![Strategy Memory](https://github.com/piyush1910dtu-dot/disha-MARG/blob/acdb5731a187277e7cfa6cc1ffdf2bdb9d903eed/Screenshots/Strategy%20Logs.png)
 
 ## ⚠️ Disclaimer
 This project is a conceptual simulation tool and does not control real traffic systems.
