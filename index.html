@@ -3,843 +3,452 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DishaMARG Lite | Traffic Control Simulator</title>
+    <title>DishaMARG Lite | Digital Twin Traffic Simulator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        .font-mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Custom scrollbar for table */
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .canvas-container { background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen">
 
-    <!-- 1. Navbar: Enterprise-grade, minimal -->
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <!-- Logo Area -->
-                <div class="flex items-center gap-3">
-                    <div class="bg-blue-600 p-1.5 rounded-md">
-                        <i data-lucide="activity" class="h-5 w-5 text-white"></i>
-                    </div>
-                    <div class="flex flex-col justify-center">
-                        <span class="font-bold text-base leading-none text-slate-900 tracking-tight">DishaMARG</span>
-                        <span class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold mt-0.5">Simulation Platform</span>
-                    </div>
+        <div class="max-w-7xl mx-auto px-4 flex justify-between h-16 items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-1.5 rounded-lg shadow-lg shadow-blue-200">
+                    <i data-lucide="activity" class="h-5 w-5 text-white"></i>
                 </div>
-
-                <!-- Navigation -->
-                <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
-                    <a href="#simulator" class="hover:text-slate-900 transition-colors">Simulation</a>
-                    <a href="#memory" class="hover:text-slate-900 transition-colors">Data Logs</a>
-                    <a href="#" class="hover:text-slate-900 transition-colors">Documentation</a>
+                <div>
+                    <span class="font-bold text-lg tracking-tight text-slate-900">DishaMARG <span class="text-blue-600">Lite</span></span>
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Digital Twin Platform</p>
                 </div>
-                
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden flex items-center">
-                    <button class="text-slate-500 hover:text-slate-900">
-                        <i data-lucide="menu" class="h-5 w-5"></i>
-                    </button>
-                </div>
+            </div>
+            <div class="hidden md:flex gap-6 text-sm font-medium text-slate-600">
+                <a href="#simulator" class="hover:text-blue-600 transition-colors">Simulation</a>
+                <a href="#memory" class="hover:text-blue-600 transition-colors">Strategy Logs</a>
             </div>
         </div>
     </nav>
 
-    <!-- 2. Hero Section: Technical, precise, no fluff -->
-    <section class="bg-slate-950 border-b border-slate-800 py-24">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded border border-slate-800 bg-slate-900 text-slate-400 text-xs font-medium mb-8">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 
-                System v1.0 Stable
-            </div>
-            
-            <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
-                Traffic Signal Control <br class="hidden md:block" />
-                Strategy Simulator
-            </h1>
-            
-            <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-                A deterministic simulation environment for comparative analysis of Fixed-Time versus Adaptive Traffic Control Systems (ATCS). Evaluate queue dissipation and intersection throughput metrics.
-            </p>
-            
-            <button onclick="document.getElementById('simulator').scrollIntoView({behavior: 'smooth'})" 
-                class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-md text-sm font-semibold shadow-sm transition-all flex items-center gap-2 mx-auto">
-                <i data-lucide="play" class="w-4 h-4"></i>
-                Initialize Simulation
-            </button>
+    <header class="bg-slate-900 py-12 px-4 text-center border-b border-slate-800">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-4 italic">"Understand traffic signal strategies without touching a real road."</h1>
+            <p class="text-slate-400 text-sm md:text-base">Explore <span class="text-emerald-400 font-semibold">Smart Mobility</span> through high-fidelity virtual replicas of real-world intersections.</p>
         </div>
-    </section>
+    </header>
 
-    <!-- 3. Simulator Dashboard: Functional, organized -->
-    <section id="simulator" class="flex-grow py-12 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <i data-lucide="monitor" class="w-5 h-5 text-slate-500"></i>
-                    Dashboard Control
-                </h2>
-                <div id="sim-status" class="hidden items-center gap-2 text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded border border-emerald-100">
-                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                    STATUS: RUNNING
-                </div>
-            </div>
-
-            <!-- Main Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <main id="simulator" class="max-w-7xl mx-auto w-full p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <aside class="lg:col-span-3 space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Simulation Config</h3>
                 
-                <!-- Left: Control Panel -->
-                <div class="lg:col-span-3 bg-white p-5 rounded border border-slate-200 shadow-sm flex flex-col gap-6">
+                <div class="space-y-4">
                     <div>
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Parameters</h3>
-                        
-                        <div class="space-y-5">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Input Flow Rate (Density)</label>
-                                <div class="relative">
-                                    <select id="traffic-level" class="w-full bg-slate-50 border border-slate-300 rounded text-sm py-2 px-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none appearance-none">
-                                        <option value="low">Low (Off-Peak)</option>
-                                        <option value="medium" selected>Medium (Standard)</option>
-                                        <option value="high">High (Saturation)</option>
-                                    </select>
-                                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-2.5 pointer-events-none"></i>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">Control Algorithm</label>
-                                <div class="relative">
-                                    <select id="signal-type" class="w-full bg-slate-50 border border-slate-300 rounded text-sm py-2 px-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none appearance-none">
-                                        <option value="fixed">Fixed-Time (Static)</option>
-                                        <option value="adaptive">Adaptive (Queue-Responsive)</option>
-                                    </select>
-                                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-2.5 pointer-events-none"></i>
-                                </div>
-                                <p id="strategy-desc" class="text-[11px] text-slate-500 mt-2 leading-relaxed border-l-2 border-slate-200 pl-2">
-                                    Cycle length is constant (10s). Phases do not adjust to real-time demand.
-                                </p>
-                            </div>
-                        </div>
+                        <label class="block text-xs font-bold text-slate-700 mb-2">Traffic Density (Flow Rate)</label>
+                        <select id="traffic-level" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="0.02">Low (Off-Peak)</option>
+                            <option value="0.06" selected>Medium (Standard)</option>
+                            <option value="0.14">High (Saturation)</option>
+                        </select>
                     </div>
 
-                    <div class="mt-4 pt-4 border-t border-slate-100">
-                        <button id="btn-run" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded text-sm font-medium transition-colors flex justify-center items-center gap-2">
-                            <i data-lucide="play" class="w-3.5 h-3.5"></i> Execute Run
-                        </button>
-                        <button id="btn-stop" class="w-full bg-white hover:bg-slate-50 text-red-600 border border-red-200 py-2.5 rounded text-sm font-medium transition-colors flex justify-center items-center gap-2 hidden">
-                            <i data-lucide="square" class="w-3.5 h-3.5 fill-current"></i> Terminate & Log
-                        </button>
-                        <button id="btn-reset" class="w-full bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 py-2 rounded text-xs font-medium transition-colors mt-3">
-                            Reset Viewport
-                        </button>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-2">Control Strategy</label>
+                        <select id="signal-type" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="fixed">Fixed-Time (Static)</option>
+                            <option value="adaptive">Adaptive (Queue-Responsive)</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- Center: Visual Canvas -->
-                <div class="lg:col-span-6 bg-slate-900 rounded border border-slate-800 shadow-md relative overflow-hidden flex items-center justify-center aspect-square lg:aspect-auto lg:h-[500px]">
-                    <!-- Canvas Overlay Info -->
-                    <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-start pointer-events-none z-10">
-                        <div class="bg-black/40 backdrop-blur-sm border border-white/10 px-3 py-1.5 rounded text-xs font-mono text-emerald-400">
-                            T+ <span id="sim-clock">00:00</span>
-                        </div>
-                        
-                        <div class="flex gap-2">
-                            <div class="bg-black/40 backdrop-blur-sm border border-white/10 p-2 rounded flex flex-col items-center min-w-[60px]">
-                                <span class="text-[9px] text-slate-400 uppercase tracking-widest mb-1">N-S</span>
-                                <div id="ns-light-status" class="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"></div>
-                            </div>
-                            <div class="bg-black/40 backdrop-blur-sm border border-white/10 p-2 rounded flex flex-col items-center min-w-[60px]">
-                                <span class="text-[9px] text-slate-400 uppercase tracking-widest mb-1">E-W</span>
-                                <div id="ew-light-status" class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="mt-8 space-y-3">
+                    <button id="btn-run" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-200">
+                        <i data-lucide="play" class="w-4 h-4"></i> Execute Run
+                    </button>
+                    <button id="btn-stop" class="hidden w-full bg-red-50 hover:bg-red-100 text-red-600 py-3 rounded-lg font-bold text-sm border border-red-200 transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="square" class="w-4 h-4"></i> Terminate & Save
+                    </button>
+                </div>
+            </div>
 
-                    <!-- Canvas -->
-                    <canvas id="simCanvas" width="600" height="600" class="max-w-full max-h-full object-contain"></canvas>
-                    
-                    <!-- Overlay: Ready State -->
-                    <div id="sim-overlay" class="absolute inset-0 bg-slate-950/80 flex items-center justify-center backdrop-blur-[2px]">
-                        <div class="text-center">
-                            <div class="bg-slate-800 p-3 rounded-full inline-block mb-3 border border-slate-700">
-                                <i data-lucide="activity" class="w-6 h-6 text-slate-400"></i>
-                            </div>
-                            <p class="text-sm font-medium text-slate-300">Simulation Environment Ready</p>
-                            <p class="text-xs text-slate-500 mt-1">Configure parameters to begin</p>
-                        </div>
+            <div class="bg-indigo-600 p-6 rounded-xl text-white shadow-lg">
+                <h4 class="font-bold text-sm mb-2 flex items-center gap-2">
+                    <i data-lucide="lightbulb" class="w-4 h-4"></i> Key Purpose
+                </h4>
+                <p id="strategy-info" class="text-xs text-indigo-100 leading-relaxed">
+                    Software-only simulation for non-intrusive comparison of traffic dynamics.
+                </p>
+            </div>
+        </aside>
+
+        <section class="lg:col-span-6 space-y-4">
+            <div class="relative canvas-container rounded-2xl overflow-hidden shadow-2xl border-4 border-slate-800 aspect-square">
+                <div class="absolute top-4 left-4 z-10">
+                    <div class="bg-black/60 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10 text-[11px] font-mono text-white flex flex-col gap-1">
+                        <span class="text-emerald-400">VIRTUAL_ENV: ACTIVE</span>
+                        <span>T_ELAPSED: <span id="clock">00:00</span></span>
                     </div>
                 </div>
 
-                <!-- Right: Analytics Panel -->
-                <div class="lg:col-span-3 bg-white p-5 rounded border border-slate-200 shadow-sm flex flex-col h-full lg:h-[500px]">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Real-time Metrics</h3>
-                    
-                    <div class="space-y-4">
-                        <div class="group">
-                            <div class="flex justify-between items-baseline mb-1">
-                                <span class="text-xs font-semibold text-slate-600">Avg. Delay</span>
-                                <span class="text-[10px] text-slate-400 font-mono">sec/veh</span>
-                            </div>
-                            <div class="font-mono text-2xl font-medium text-slate-900 tracking-tight" id="stat-wait">0.0</div>
-                            <div class="h-1 w-full bg-slate-100 mt-2 rounded-full overflow-hidden">
-                                <div class="h-full bg-blue-500 w-0 transition-all duration-300" style="width: 0%"></div> <!-- Mock viz -->
-                            </div>
-                        </div>
+                <div class="absolute top-4 right-4 z-10 flex gap-3">
+                    <div class="flex flex-col items-center bg-black/40 p-2 rounded-md backdrop-blur-sm border border-white/5">
+                        <span class="text-[9px] text-slate-400 font-bold mb-1 uppercase">North-South</span>
+                        <div id="ns-light" class="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_12px_#ef4444]"></div>
+                    </div>
+                    <div class="flex flex-col items-center bg-black/40 p-2 rounded-md backdrop-blur-sm border border-white/5">
+                        <span class="text-[9px] text-slate-400 font-bold mb-1 uppercase">East-West</span>
+                        <div id="ew-light" class="w-3 h-3 rounded-full bg-slate-700"></div>
+                    </div>
+                </div>
 
-                        <div class="group">
-                            <div class="flex justify-between items-baseline mb-1">
-                                <span class="text-xs font-semibold text-slate-600">Queue Length</span>
-                                <span class="text-[10px] text-slate-400 font-mono">vehicles</span>
-                            </div>
-                            <div class="font-mono text-2xl font-medium text-slate-900 tracking-tight" id="stat-queue">0</div>
-                            <div class="h-1 w-full bg-slate-100 mt-2 rounded-full overflow-hidden">
-                                <div class="h-full bg-orange-500 w-0 transition-all duration-300" style="width: 0%"></div>
-                            </div>
-                        </div>
+                <canvas id="simCanvas" width="600" height="600" class="w-full h-full"></canvas>
 
-                        <div class="group">
-                            <div class="flex justify-between items-baseline mb-1">
-                                <span class="text-xs font-semibold text-slate-600">Throughput</span>
-                                <span class="text-[10px] text-slate-400 font-mono">cumulative</span>
-                            </div>
-                            <div class="font-mono text-2xl font-medium text-slate-900 tracking-tight" id="stat-passed">0</div>
+                <div id="overlay" class="absolute inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center">
+                    <div class="text-center text-white p-8">
+                        <div class="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl">
+                            <i data-lucide="cpu" class="w-8 h-8"></i>
                         </div>
-                        
-                        <div class="mt-8 pt-6 border-t border-slate-100">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-bold text-slate-500 uppercase">Efficiency Index</span>
-                                <span class="text-xs font-mono font-bold text-slate-900"><span id="efficiency-val">0</span>%</span>
-                            </div>
-                            <div class="w-full bg-slate-100 rounded-full h-1.5">
-                                <div id="efficiency-bar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                        </div>
+                        <p class="font-bold tracking-widest text-lg">Digital Twin Ready</p>
+                        <p class="text-sm text-slate-300 mt-2">Configure parameters and initialize to begin exploration</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 4. Strategy Memory: Analytical Table -->
-    <section id="memory" class="py-16 bg-white border-t border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-6 gap-4">
+        <aside class="lg:col-span-3 space-y-6">
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm h-full">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6 border-b pb-2">Real-time Metrics</h3>
+                
+                <div class="space-y-8">
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <p class="text-xs text-slate-500 font-bold">Queue Pressure</p>
+                            <span class="text-[10px] text-slate-400 font-mono">Vehicles</span>
+                        </div>
+                        <p class="text-3xl font-mono font-bold text-slate-800" id="val-queue">0</p>
+                        <div class="w-full bg-slate-100 h-2 mt-2 rounded-full overflow-hidden">
+                            <div id="bar-queue" class="bg-orange-500 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="text-xs text-slate-500 font-bold mb-1">Cumulative Throughput</p>
+                        <p class="text-3xl font-mono font-bold text-slate-800" id="val-passed">0</p>
+                    </div>
+
+                    <div class="pt-6 border-t border-slate-100">
+                        <p class="text-xs text-slate-500 font-bold mb-2">Efficiency Index</p>
+                        <div class="flex items-end gap-2">
+                            <p class="text-5xl font-mono font-bold text-blue-600 leading-none" id="val-efficiency">0</p>
+                            <p class="text-sm font-bold text-blue-400 mb-1">%</p>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-3 leading-relaxed">Calculated based on average dissipation vs. waiting time.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <section id="memory" class="max-w-7xl mx-auto w-full p-4 md:p-8 pb-24">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-900">Run Log & Comparative Data</h2>
-                    <p class="text-sm text-slate-500 mt-1">Historical performance metrics for executed simulation scenarios.</p>
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="database" class="w-5 h-5 text-blue-600"></i>
+                        Strategy Memory Mode
+                    </h2>
+                    <p class="text-sm text-slate-500">Historical performance data captured for comparative learning.</p>
                 </div>
-                <button onclick="clearHistory()" class="px-3 py-1.5 text-xs font-medium text-slate-600 border border-slate-200 rounded hover:bg-slate-50 transition-colors">
-                    Reset Log
-                </button>
+                <button onclick="clearLogs()" class="text-xs font-bold text-slate-400 hover:text-red-500 transition-colors">Clear All History</button>
             </div>
-
-            <div class="border border-slate-200 rounded-md overflow-hidden shadow-sm">
-                <div class="overflow-x-auto custom-scroll">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 border-b border-slate-200">
-                            <tr>
-                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Run ID</th>
-                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Control Logic</th>
-                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Flow Density</th>
-                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Avg. Delay</th>
-                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Throughput Rate</th>
-                                <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">State</th>
-                            </tr>
-                        </thead>
-                        <tbody id="memory-table-body" class="divide-y divide-slate-100 bg-white">
-                            <!-- Empty State -->
-                            <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <i data-lucide="database" class="w-8 h-8 text-slate-200 mb-3"></i>
-                                        <p class="text-slate-900 font-medium">Awaiting Data</p>
-                                        <p class="text-slate-500 text-xs mt-1">Initialize a simulation run to generate performance metrics.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-50 text-slate-500 font-bold text-[11px] uppercase tracking-wider">
+                        <tr>
+                            <th class="px-6 py-4">Run Strategy</th>
+                            <th class="px-6 py-4">Environment Load</th>
+                            <th class="px-6 py-4">Total Throughput</th>
+                            <th class="px-6 py-4">Avg. Wait Time</th>
+                            <th class="px-6 py-4 text-right">Efficiency Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-body" class="divide-y divide-slate-50 text-slate-600">
+                        <tr>
+                            <td colspan="5" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center opacity-40">
+                                    <i data-lucide="inbox" class="w-8 h-8 mb-2"></i>
+                                    <p class="text-xs font-medium uppercase tracking-widest">Memory Bank Empty</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </section>
 
-    <!-- 5. Footer: Simple, Attribution -->
-    <footer class="bg-white border-t border-slate-200 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="text-xs text-slate-400">
-                <span class="font-semibold text-slate-600">DishaMARG v1.0</span> &middot; Educational Prototype
+    <footer class="bg-white border-t border-slate-200 py-10">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-xs text-slate-400 text-center md:text-left">
+                <span class="font-bold text-slate-700">DishaMARG Lite</span> &middot; Smart Mobility Digital Twin <br>
+                Jaypee Institute of Information Technology, Noida
             </div>
-            <div class="text-xs text-slate-400">
-                Developed for Smart City Hackathon 2026
+            
+            <div class="flex flex-col items-center md:items-end">
+                <span class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-black mb-1">Developed by</span>
+                <div class="flex items-center gap-2">
+                    <span class="h-px w-8 bg-blue-600/30"></span>
+                    <span class="text-lg font-black tracking-tighter bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+                        TEAM NOVAFORGE
+                    </span>
+                    <span class="h-px w-8 bg-blue-600/30"></span>
+                </div>
+                <p class="text-[9px] text-slate-400 mt-1 font-medium">Innovate 3.0: Hack to Build</p>
             </div>
         </div>
     </footer>
 
-    <!-- LOGIC SCRIPT (Functionality Preserved) -->
     <script>
-        // --- 1. CONFIG & STATE ---
+        // --- SIMULATION ENGINE ---
         const canvas = document.getElementById('simCanvas');
         const ctx = canvas.getContext('2d');
-        const CAR_SIZE = 14;
-        const ROAD_WIDTH = 120; // Width of the road lanes
-        
-        let animationId;
-        let lastTime = 0;
-        let simTime = 0; // In seconds
+        const ROAD_SIZE = 140;
+
         let isRunning = false;
-        
-        // Simulation Entities
         let cars = [];
-        let particles = []; 
-        let runStats = {
-            spawned: 0,
-            passed: 0,
-            totalWaitTime: 0,
-            maxQueue: 0,
-            startTime: 0
-        };
+        let simTime = 0;
+        let stats = { passed: 0, waitTotal: 0, sessionWait: [] };
+        let signal = { phase: 'NS', timer: 0, ns_queue: 0, ew_queue: 0 };
 
-        // Configuration State
-        let config = {
-            trafficLevel: 'medium',
-            signalType: 'fixed',
-        };
-
-        // Traffic Light State
-        let lightState = {
-            phase: 0, 
-            timer: 0,
-            greenDuration: 10,
-            yellowDuration: 2,
-            minGreen: 5,
-            maxGreen: 20
-        };
-
-        let history = [];
-
-        // --- 2. CLASSES ---
+        const getConfig = () => ({
+            density: parseFloat(document.getElementById('traffic-level').value),
+            type: document.getElementById('signal-type').value
+        });
 
         class Car {
-            constructor(axis, direction) {
-                this.axis = axis;
-                this.direction = direction;
-                this.width = CAR_SIZE;
-                this.height = CAR_SIZE;
+            constructor(dir) {
+                this.dir = dir; // N, S, E, W
+                this.id = Math.random();
+                this.w = 15; this.h = 26;
                 this.speed = 0;
-                this.maxSpeed = 2 + Math.random() * 1.5;
-                this.acceleration = 0.1;
+                this.maxSpeed = 1.8 + Math.random() * 1.5;
                 this.stopped = false;
                 this.waitTime = 0;
-                
-                if (axis === 'NS') {
-                    this.x = canvas.width / 2 + (direction * ROAD_WIDTH / 4);
-                    this.y = direction === 1 ? -50 : canvas.height + 50;
-                } else {
-                    this.y = canvas.height / 2 + (direction * ROAD_WIDTH / 4);
-                    this.x = direction === 1 ? -50 : canvas.width + 50;
-                }
-                
-                // Tech blue vs Tech orange
-                this.color = axis === 'NS' ? '#3b82f6' : '#f97316';
+
+                const center = 300;
+                const offset = 28;
+                if(dir === 'S') { this.x = center - offset; this.y = -40; }
+                if(dir === 'N') { this.x = center + offset; this.y = 640; }
+                if(dir === 'E') { this.x = -40; this.y = center + offset; [this.w, this.h] = [this.h, this.w]; }
+                if(dir === 'W') { this.x = 640; this.y = center - offset; [this.w, this.h] = [this.h, this.w]; }
             }
 
-            update(dt, allCars, lights) {
-                let distToStopLine = Infinity;
-                const stopLineMargin = ROAD_WIDTH/2 + 10;
-                const center = { x: canvas.width/2, y: canvas.height/2 };
-                
-                if (this.axis === 'NS') {
-                    if (this.direction === 1 && this.y < center.y - stopLineMargin) {
-                        distToStopLine = (center.y - stopLineMargin) - this.y;
-                    } else if (this.direction === -1 && this.y > center.y + stopLineMargin) {
-                        distToStopLine = this.y - (center.y + stopLineMargin);
-                    }
-                } else {
-                    if (this.direction === 1 && this.x < center.x - stopLineMargin) {
-                        distToStopLine = (center.x - stopLineMargin) - this.x;
-                    } else if (this.direction === -1 && this.x > center.x + stopLineMargin) {
-                        distToStopLine = this.x - (center.x + stopLineMargin);
-                    }
-                }
-
-                let lightIsRed = false;
-                if (this.axis === 'NS') {
-                    if (lightState.phase === 2 || lightState.phase === 3) lightIsRed = true;
-                    if (lightState.phase === 1 && distToStopLine > 20) lightIsRed = true;
-                } else {
-                    if (lightState.phase === 0 || lightState.phase === 1) lightIsRed = true;
-                    if (lightState.phase === 3 && distToStopLine > 20) lightIsRed = true;
-                }
-
-                let distToCarAhead = Infinity;
-                for (let other of allCars) {
-                    if (other === this) continue;
-                    if (other.axis !== this.axis || other.direction !== this.direction) continue;
-                    
-                    let d = Infinity;
-                    if (this.axis === 'NS') {
-                        if (this.direction === 1 && other.y > this.y) d = other.y - this.y;
-                        if (this.direction === -1 && other.y < this.y) d = this.y - other.y;
-                    } else {
-                        if (this.direction === 1 && other.x > this.x) d = other.x - this.x;
-                        if (this.direction === -1 && other.x < this.x) d = this.x - other.x;
-                    }
-                    
-                    if (d > 0 && d < distToCarAhead) distToCarAhead = d;
-                }
-
-                let targetSpeed = this.maxSpeed;
-                this.stopped = false;
-
-                if (lightIsRed && distToStopLine > 0 && distToStopLine < 80) {
-                    targetSpeed = 0;
-                    this.stopped = true;
-                }
-
-                if (distToCarAhead < 40) {
-                    targetSpeed = 0;
-                    this.stopped = true;
-                } else if (distToCarAhead < 80) {
-                    targetSpeed = this.maxSpeed * 0.5;
-                }
-
-                if (this.speed < targetSpeed) this.speed += this.acceleration;
-                else if (this.speed > targetSpeed) this.speed -= this.acceleration * 2;
-                if (this.speed < 0.1) this.speed = 0;
-
-                if (this.axis === 'NS') this.y += this.speed * this.direction;
-                else this.x += this.speed * this.direction;
-
-                if (this.speed < 0.5 && distToStopLine > 0 && distToStopLine < 300) {
-                    this.waitTime += dt;
-                    runStats.totalWaitTime += dt;
-                }
-            }
-
-            draw(ctx) {
-                ctx.fillStyle = this.color;
+            draw() {
+                // Main Body
+                ctx.fillStyle = this.stopped ? '#ef4444' : '#3b82f6';
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, 6, 0, Math.PI * 2);
+                ctx.roundRect(this.x - this.w/2, this.y - this.h/2, this.w, this.h, 5);
                 ctx.fill();
-
-                // Subtle headlights
-                ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-                ctx.beginPath();
-                if(this.axis === 'NS') {
-                    let yDir = this.direction === 1 ? 10 : -10;
-                    ctx.arc(this.x - 3, this.y + yDir, 2, 0, Math.PI * 2);
-                    ctx.arc(this.x + 3, this.y + yDir, 2, 0, Math.PI * 2);
-                } else {
-                    let xDir = this.direction === 1 ? 10 : -10;
-                    ctx.arc(this.x + xDir, this.y - 3, 2, 0, Math.PI * 2);
-                    ctx.arc(this.x + xDir, this.y + 3, 2, 0, Math.PI * 2);
-                }
-                ctx.fill();
-
-                if(this.speed < 0.5) {
-                    ctx.fillStyle = "rgba(239, 68, 68, 0.8)";
-                     if(this.axis === 'NS') {
-                        let yDir = this.direction === 1 ? -6 : 6;
-                        ctx.fillRect(this.x - 4, this.y + yDir, 3, 2);
-                        ctx.fillRect(this.x + 1, this.y + yDir, 3, 2);
-                    } else {
-                        let xDir = this.direction === 1 ? -6 : 6;
-                        ctx.fillRect(this.x + xDir, this.y - 4, 2, 3);
-                        ctx.fillRect(this.x + xDir, this.y + 1, 2, 3);
-                    }
-                }
+                
+                // Headlights/Tail-lights
+                ctx.fillStyle = this.stopped ? 'rgba(255, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.6)';
+                if(this.dir === 'S') ctx.fillRect(this.x-6, this.y+8, 3, 3), ctx.fillRect(this.x+3, this.y+8, 3, 3);
+                if(this.dir === 'N') ctx.fillRect(this.x-6, this.y-11, 3, 3), ctx.fillRect(this.x+3, this.y-11, 3, 3);
             }
-        }
 
-        // --- 3. SIMULATION LOGIC ---
+            update(cars, currentSignal) {
+                let canMove = true;
+                const stopLine = 220;
+                const exitLine = 380;
 
-        function initSim() {
-            cars = [];
-            particles = [];
-            simTime = 0;
-            runStats = { spawned: 0, passed: 0, totalWaitTime: 0, maxQueue: 0, startTime: Date.now() };
-            lightState = { phase: 0, timer: 0, greenDuration: 8, yellowDuration: 2, minGreen: 4, maxGreen: 20 };
-            
-            const level = document.getElementById('traffic-level').value;
-            const type = document.getElementById('signal-type').value;
-            config.trafficLevel = level;
-            config.signalType = type;
+                // Virtual Sensor & Traffic Signal Compliance
+                if (this.dir === 'S' && this.y < stopLine && this.y + 35 > stopLine && currentSignal.phase !== 'NS') canMove = false;
+                if (this.dir === 'N' && this.y > exitLine && this.y - 35 < exitLine && currentSignal.phase !== 'NS') canMove = false;
+                if (this.dir === 'E' && this.x < stopLine && this.x + 35 > stopLine && currentSignal.phase !== 'EW') canMove = false;
+                if (this.dir === 'W' && this.x > exitLine && this.x - 35 < exitLine && currentSignal.phase !== 'EW') canMove = false;
 
-            document.getElementById('sim-overlay').classList.add('hidden');
-            document.getElementById('btn-run').classList.add('hidden');
-            document.getElementById('btn-stop').classList.remove('hidden');
-            document.getElementById('btn-stop').classList.add('flex');
-            document.getElementById('sim-status').classList.remove('hidden');
-            document.getElementById('sim-status').classList.add('flex');
-            
-            isRunning = true;
-            lastTime = performance.now();
-            requestAnimationFrame(loop);
-        }
-
-        function stopSim() {
-            isRunning = false;
-            cancelAnimationFrame(animationId);
-            document.getElementById('sim-overlay').classList.remove('hidden');
-            document.getElementById('btn-run').classList.remove('hidden');
-            document.getElementById('btn-stop').classList.add('hidden');
-            document.getElementById('btn-stop').classList.remove('flex');
-            document.getElementById('sim-status').classList.add('hidden');
-            document.getElementById('sim-status').classList.remove('flex');
-
-            const avgWait = runStats.passed > 0 ? (runStats.totalWaitTime / runStats.passed).toFixed(2) : 0;
-            const throughput = (runStats.passed / (simTime || 1)).toFixed(2);
-            
-            const runData = {
-                id: history.length + 1,
-                strategy: config.signalType === 'fixed' ? 'Fixed-Time' : 'Adaptive',
-                density: config.trafficLevel,
-                wait: avgWait,
-                throughput: throughput * 60,
-            };
-            history.push(runData);
-            updateHistoryTable();
-        }
-
-        function updateTrafficLights(dt) {
-            lightState.timer += dt;
-            let switchLight = false;
-
-            if (config.signalType === 'fixed') {
-                const currentDuration = (lightState.phase === 0 || lightState.phase === 2) 
-                                        ? lightState.greenDuration 
-                                        : lightState.yellowDuration;
-                
-                if (lightState.timer >= currentDuration) {
-                    switchLight = true;
-                }
-            } else {
-                const isGreenPhase = (lightState.phase === 0 || lightState.phase === 2);
-                
-                if (!isGreenPhase) {
-                    if (lightState.timer >= lightState.yellowDuration) switchLight = true;
-                } else {
-                    if (lightState.timer >= lightState.minGreen) {
-                        const nsQueue = countQueue('NS');
-                        const ewQueue = countQueue('EW');
-                        const currentAxis = (lightState.phase === 0) ? 'NS' : 'EW';
-                        const redQueue = currentAxis === 'NS' ? ewQueue : nsQueue;
-                        const greenQueue = currentAxis === 'NS' ? nsQueue : ewQueue;
-
-                        if (lightState.timer >= lightState.maxGreen || (redQueue > 0 && greenQueue === 0)) {
-                            switchLight = true;
+                // Inter-Vehicle Distance Monitoring
+                cars.forEach(other => {
+                    if (other.id === this.id) return;
+                    if (this.dir === other.dir) {
+                        const dist = Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
+                        if (dist < 38) {
+                            if(this.dir === 'S' && other.y > this.y) canMove = false;
+                            if(this.dir === 'N' && other.y < this.y) canMove = false;
+                            if(this.dir === 'E' && other.x > this.x) canMove = false;
+                            if(this.dir === 'W' && other.x < this.x) canMove = false;
                         }
-                    }
-                }
-            }
-
-            if (switchLight) {
-                lightState.timer = 0;
-                lightState.phase = (lightState.phase + 1) % 4;
-            }
-        }
-
-        function countQueue(axis) {
-            let count = 0;
-            const stopLineMargin = ROAD_WIDTH/2 + 20;
-            const center = { x: canvas.width/2, y: canvas.height/2 };
-
-            cars.forEach(car => {
-                if (car.axis !== axis) return;
-                if (!car.stopped) return;
-                let dist = 0;
-                if (axis === 'NS') dist = Math.abs(car.y - center.y);
-                else dist = Math.abs(car.x - center.x);
-                if (dist < 300 && dist > ROAD_WIDTH/2) count++;
-            });
-            return count;
-        }
-
-        function spawnTraffic(dt) {
-            let spawnRate = 0.5;
-            if (config.trafficLevel === 'low') spawnRate = 0.3;
-            if (config.trafficLevel === 'high') spawnRate = 0.9;
-
-            if (Math.random() < spawnRate * dt) {
-                const axis = Math.random() > 0.5 ? 'NS' : 'EW';
-                const dir = Math.random() > 0.5 ? 1 : -1;
-                
-                let blocked = false;
-                cars.forEach(c => {
-                    if (c.axis === axis && c.direction === dir) {
-                        let dist = 0;
-                        if (axis === 'NS') dist = Math.abs((dir === 1 ? -50 : canvas.height+50) - c.y);
-                        else dist = Math.abs((dir === 1 ? -50 : canvas.width+50) - c.x);
-                        if (dist < 40) blocked = true;
                     }
                 });
 
-                if (!blocked) {
-                    cars.push(new Car(axis, dir));
-                    runStats.spawned++;
-                }
-            }
-        }
-
-        function drawEnvironment(ctx) {
-            // Darker background for technical feel
-            ctx.fillStyle = "#0f172a"; 
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            const cx = canvas.width / 2;
-            const cy = canvas.height / 2;
-            const rw = ROAD_WIDTH;
-
-            // Roads
-            ctx.fillStyle = "#1e293b";
-            ctx.fillRect(cx - rw/2, 0, rw, canvas.height);
-            ctx.fillRect(0, cy - rw/2, canvas.width, rw);
-
-            // Intersection
-            ctx.fillStyle = "#334155";
-            ctx.fillRect(cx - rw/2, cy - rw/2, rw, rw);
-
-            // Markings
-            ctx.strokeStyle = "#475569";
-            ctx.lineWidth = 2;
-            ctx.setLineDash([15, 15]);
-
-            ctx.beginPath();
-            ctx.moveTo(cx, 0); ctx.lineTo(cx, cy - rw/2);
-            ctx.moveTo(cx, cy + rw/2); ctx.lineTo(cx, canvas.height);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(0, cy); ctx.lineTo(cx - rw/2, cy);
-            ctx.moveTo(cx + rw/2, cy); ctx.lineTo(canvas.width, cy);
-            ctx.stroke();
-            
-            ctx.setLineDash([]);
-            ctx.strokeStyle = "#94a3b8";
-            ctx.lineWidth = 4;
-            
-            ctx.beginPath();
-            ctx.moveTo(cx, cy - rw/2); ctx.lineTo(cx + rw/2, cy - rw/2);
-            ctx.moveTo(cx - rw/2, cy + rw/2); ctx.lineTo(cx, cy + rw/2);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(cx - rw/2, cy - rw/2); ctx.lineTo(cx - rw/2, cy);
-            ctx.moveTo(cx + rw/2, cy); ctx.lineTo(cx + rw/2, cy + rw/2);
-            ctx.stroke();
-        }
-
-        function drawLights(ctx) {
-            const cx = canvas.width / 2;
-            const cy = canvas.height / 2;
-            const offset = ROAD_WIDTH / 2 + 20;
-
-            function drawLight(x, y, color, glow) {
-                ctx.fillStyle = "#020617";
-                ctx.beginPath();
-                ctx.arc(x, y, 12, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.fillStyle = color;
-                if (glow) {
-                    ctx.shadowColor = color;
-                    ctx.shadowBlur = 15;
-                }
-                ctx.beginPath();
-                ctx.arc(x, y, 8, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.shadowBlur = 0;
-            }
-
-            let nsColor = '#ef4444';
-            let ewColor = '#ef4444';
-
-            if (lightState.phase === 0) nsColor = '#22c55e';
-            if (lightState.phase === 1) nsColor = '#eab308';
-            if (lightState.phase === 2) ewColor = '#22c55e';
-            if (lightState.phase === 3) ewColor = '#eab308';
-
-            drawLight(cx + offset, cy - offset, nsColor, nsColor !== '#ef4444');
-            drawLight(cx - offset, cy + offset, nsColor, nsColor !== '#ef4444');
-            drawLight(cx - offset, cy - offset, ewColor, ewColor !== '#ef4444');
-            drawLight(cx + offset, cy + offset, ewColor, ewColor !== '#ef4444');
-
-            const nsDOM = document.getElementById('ns-light-status');
-            const ewDOM = document.getElementById('ew-light-status');
-            const colorMap = { '#22c55e': 'bg-green-500', '#eab308': 'bg-yellow-500', '#ef4444': 'bg-red-500' };
-            const shadowMap = { '#22c55e': 'rgba(34,197,94,0.6)', '#eab308': 'rgba(234,179,8,0.6)', '#ef4444': 'rgba(239,68,68,0.6)' };
-            
-            nsDOM.className = `w-2.5 h-2.5 rounded-full ${colorMap[nsColor]}`;
-            nsDOM.style.boxShadow = `0 0 8px ${shadowMap[nsColor]}`;
-            
-            ewDOM.className = `w-2.5 h-2.5 rounded-full ${colorMap[ewColor]}`;
-            ewDOM.style.boxShadow = `0 0 8px ${shadowMap[ewColor]}`;
-        }
-
-        function updateUI(dt) {
-            const m = Math.floor(simTime / 60).toString().padStart(2, '0');
-            const s = Math.floor(simTime % 60).toString().padStart(2, '0');
-            document.getElementById('sim-clock').textContent = `${m}:${s}`;
-
-            const avgWait = runStats.passed > 0 ? runStats.totalWaitTime / runStats.passed : 0;
-            document.getElementById('stat-wait').textContent = avgWait.toFixed(1);
-
-            document.getElementById('stat-passed').textContent = runStats.passed;
-
-            const totalQ = countQueue('NS') + countQueue('EW');
-            document.getElementById('stat-queue').textContent = totalQ;
-            if(totalQ > runStats.maxQueue) runStats.maxQueue = totalQ;
-
-            let eff = 100;
-            if (avgWait > 5) eff -= (avgWait - 5) * 5;
-            if (totalQ > 10) eff -= (totalQ - 10) * 2;
-            if (eff < 0) eff = 0;
-            document.getElementById('efficiency-val').textContent = Math.floor(eff);
-            document.getElementById('efficiency-bar').style.width = `${Math.floor(eff)}%`;
-            if (eff > 70) document.getElementById('efficiency-bar').className = "bg-emerald-500 h-1.5 rounded-full transition-all duration-500";
-            else if (eff > 40) document.getElementById('efficiency-bar').className = "bg-yellow-500 h-1.5 rounded-full transition-all duration-500";
-            else document.getElementById('efficiency-bar').className = "bg-red-500 h-1.5 rounded-full transition-all duration-500";
-        }
-
-        function loop(timestamp) {
-            if (!isRunning) return;
-            const dt = (timestamp - lastTime) / 1000;
-            lastTime = timestamp;
-            simTime += dt;
-
-            spawnTraffic(dt);
-            updateTrafficLights(dt);
-            cars.forEach(car => car.update(dt, cars, lightState));
-
-            for (let i = cars.length - 1; i >= 0; i--) {
-                const c = cars[i];
-                let remove = false;
-                if (c.axis === 'NS') {
-                    if (c.direction === 1 && c.y > canvas.height + 60) remove = true;
-                    if (c.direction === -1 && c.y < -60) remove = true;
+                if (canMove) {
+                    this.speed = Math.min(this.speed + 0.12, this.maxSpeed);
+                    this.stopped = false;
                 } else {
-                    if (c.direction === 1 && c.x > canvas.width + 60) remove = true;
-                    if (c.direction === -1 && c.x < -60) remove = true;
+                    this.speed = 0;
+                    this.stopped = true;
+                    this.waitTime += 0.016;
                 }
-                if (remove) {
-                    cars.splice(i, 1);
-                    runStats.passed++;
-                }
-            }
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawEnvironment(ctx);
-            drawLights(ctx);
-            cars.forEach(car => car.draw(ctx));
-            
-            updateUI(dt);
-            animationId = requestAnimationFrame(loop);
+                if(this.dir === 'S') this.y += this.speed;
+                if(this.dir === 'N') this.y -= this.speed;
+                if(this.dir === 'E') this.x += this.speed;
+                if(this.dir === 'W') this.x -= this.speed;
+            }
         }
 
-        // --- 4. HISTORY TABLE LOGIC ---
-
-        function updateHistoryTable() {
-            const tbody = document.getElementById('memory-table-body');
-            tbody.innerHTML = '';
+        function drawEnvironment() {
+            // Asphalt Roads
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 300 - ROAD_SIZE/2, 600, ROAD_SIZE);
+            ctx.fillRect(300 - ROAD_SIZE/2, 0, ROAD_SIZE, 600);
             
-            if (history.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="px-6 py-12 text-center">
-                            <div class="flex flex-col items-center justify-center">
-                                <i data-lucide="database" class="w-8 h-8 text-slate-200 mb-3"></i>
-                                <p class="text-slate-900 font-medium">Awaiting Data</p>
-                                <p class="text-slate-500 text-xs mt-1">Initialize a simulation run to generate performance metrics.</p>
-                            </div>
-                        </td>
-                    </tr>`;
-                return;
+            // Lane Markings
+            ctx.strokeStyle = '#475569';
+            ctx.setLineDash([15, 15]);
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(300, 0); ctx.lineTo(300, 600); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, 300); ctx.lineTo(600, 300); ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Zebra Crossings (Conceptual)
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(300 - ROAD_SIZE/2, 210, ROAD_SIZE, 10);
+            ctx.fillRect(300 - ROAD_SIZE/2, 380, ROAD_SIZE, 10);
+            ctx.fillRect(210, 300 - ROAD_SIZE/2, 10, ROAD_SIZE);
+            ctx.fillRect(380, 300 - ROAD_SIZE/2, 10, ROAD_SIZE);
+        }
+
+        function runEngine() {
+            if (!isRunning) return;
+            ctx.clearRect(0, 0, 600, 600);
+            drawEnvironment();
+
+            const cfg = getConfig();
+
+            // Dynamic Spawning Logic
+            if (Math.random() < cfg.density) {
+                const dirs = ['N', 'S', 'E', 'W'];
+                cars.push(new Car(dirs[Math.floor(Math.random() * 4)]));
             }
 
-            [...history].reverse().forEach(run => {
-                const row = document.createElement('tr');
-                row.className = "hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0";
-                
-                let waitColor = 'text-emerald-600';
-                if(run.wait > 10) waitColor = 'text-yellow-600';
-                if(run.wait > 20) waitColor = 'text-red-600';
+            // Signal Timing Innovation: Pressure-Based Adaptive Logic
+            signal.timer += 0.016;
+            let dynamicThreshold = 10;
+            if (cfg.type === 'adaptive') {
+                // Adjust green light time based on queue density (Pressure)
+                const pressure = signal.phase === 'NS' ? signal.ns_queue : signal.ew_queue;
+                const opposingPressure = signal.phase === 'NS' ? signal.ew_queue : signal.ns_queue;
+                dynamicThreshold = Math.max(4, 12 + (pressure * 0.4) - (opposingPressure * 0.2));
+            }
+            
+            if (signal.timer > dynamicThreshold) {
+                signal.phase = signal.phase === 'NS' ? 'EW' : 'NS';
+                signal.timer = 0;
+            }
 
-                row.innerHTML = `
-                    <td class="px-6 py-3 font-mono text-xs text-slate-400">#${String(run.id).padStart(3, '0')}</td>
-                    <td class="px-6 py-3 font-medium text-slate-900">
-                        ${run.strategy}
+            // Update UI Light States
+            document.getElementById('ns-light').className = `w-3 h-3 rounded-full transition-all ${signal.phase === 'NS' ? 'bg-emerald-500 shadow-[0_0_15px_#10b981]' : 'bg-slate-800'}`;
+            document.getElementById('ew-light').className = `w-3 h-3 rounded-full transition-all ${signal.phase === 'EW' ? 'bg-emerald-500 shadow-[0_0_15px_#10b981]' : 'bg-slate-800'}`;
+
+            // Process Car Entities
+            let currentQueues = { NS: 0, EW: 0 };
+            cars = cars.filter(car => {
+                car.update(cars, signal);
+                car.draw();
+                
+                if (car.stopped) {
+                    if (car.dir === 'N' || car.dir === 'S') currentQueues.NS++;
+                    else currentQueues.EW++;
+                }
+
+                // Off-screen disposal & stat collection
+                if (car.x > 660 || car.x < -60 || car.y > 660 || car.y < -60) {
+                    stats.passed++;
+                    stats.sessionWait.push(car.waitTime);
+                    return false;
+                }
+                return true;
+            });
+
+            signal.ns_queue = currentQueues.NS;
+            signal.ew_queue = currentQueues.EW;
+
+            // UI Metric Updates
+            simTime += 0.016;
+            document.getElementById('clock').innerText = new Date(simTime * 1000).toISOString().substr(14, 5);
+            document.getElementById('val-queue').innerText = signal.ns_queue + signal.ew_queue;
+            document.getElementById('val-passed').innerText = stats.passed;
+            document.getElementById('bar-queue').style.width = `${Math.min(100, (signal.ns_queue + signal.ew_queue) * 4)}%`;
+            
+            const avgWait = stats.sessionWait.length ? (stats.sessionWait.reduce((a,b)=>a+b,0) / stats.sessionWait.length).toFixed(1) : 0;
+            const efficiency = Math.max(0, 100 - (avgWait * 1.5));
+            document.getElementById('val-efficiency').innerText = Math.floor(efficiency);
+
+            requestAnimationFrame(runEngine);
+        }
+
+        // --- INTERACTION LOGIC ---
+        document.getElementById('btn-run').onclick = () => {
+            isRunning = true;
+            simTime = 0;
+            cars = [];
+            stats = { passed: 0, waitTotal: 0, sessionWait: [] };
+            document.getElementById('overlay').classList.add('hidden');
+            document.getElementById('btn-run').classList.add('hidden');
+            document.getElementById('btn-stop').classList.remove('hidden');
+            runEngine();
+        };
+
+        document.getElementById('btn-stop').onclick = () => {
+            isRunning = false;
+            document.getElementById('overlay').classList.remove('hidden');
+            document.getElementById('btn-run').classList.remove('hidden');
+            document.getElementById('btn-stop').classList.add('hidden');
+            
+            // Strategic Memory Mode: Record Data
+            const cfg = getConfig();
+            const logBody = document.getElementById('log-body');
+            if(stats.sessionWait.length === 0) return;
+
+            const avgWait = (stats.sessionWait.reduce((a,b)=>a+b,0) / stats.sessionWait.length).toFixed(1);
+            const eff = Math.floor(Math.max(0, 100 - (avgWait * 1.5)));
+
+            const row = `
+                <tr class="hover:bg-slate-50 transition-colors group">
+                    <td class="px-6 py-4 font-bold text-blue-600 capitalize flex items-center gap-2">
+                        <i data-lucide="${cfg.type === 'fixed' ? 'clock' : 'zap'}" class="w-3 h-3"></i>
+                        ${cfg.type}
                     </td>
-                    <td class="px-6 py-3 text-slate-600 capitalize text-xs">${run.density}</td>
-                    <td class="px-6 py-3 font-mono font-bold text-xs ${waitColor}">${run.wait}s</td>
-                    <td class="px-6 py-3 text-slate-600 font-mono text-xs">${run.throughput} <span class="text-[10px] text-slate-400">cpm</span></td>
-                    <td class="px-6 py-3 text-right">
-                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-500">
-                            LOGGED
+                    <td class="px-6 py-4 text-slate-500">${document.getElementById('traffic-level').selectedOptions[0].text}</td>
+                    <td class="px-6 py-4 font-mono">${stats.passed} units</td>
+                    <td class="px-6 py-4">${avgWait}s</td>
+                    <td class="px-6 py-4 text-right">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black tracking-tighter ${eff > 75 ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'}">
+                            ${eff}% SCORE
                         </span>
                     </td>
-                `;
-                tbody.appendChild(row);
-            });
+                </tr>
+            `;
+            if (logBody.innerText.includes('Memory Bank Empty')) logBody.innerHTML = '';
+            logBody.innerHTML = row + logBody.innerHTML;
+            lucide.createIcons();
+        };
+
+        function clearLogs() {
+            document.getElementById('log-body').innerHTML = `
+                <tr><td colspan="5" class="px-6 py-12 text-center opacity-40 italic">Memory bank cleared.</td></tr>
+            `;
         }
-
-        function clearHistory() {
-            history = [];
-            updateHistoryTable();
-        }
-
-        // --- 5. INITIALIZATION ---
-        
-        drawEnvironment(ctx);
-        
-        document.getElementById('btn-run').addEventListener('click', initSim);
-        document.getElementById('btn-stop').addEventListener('click', stopSim);
-        
-        document.getElementById('btn-reset').addEventListener('click', () => {
-            if (isRunning) stopSim();
-            cars = [];
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawEnvironment(ctx);
-            document.getElementById('stat-wait').textContent = "0.0";
-            document.getElementById('stat-passed').textContent = "0";
-            document.getElementById('stat-queue').textContent = "0";
-            document.getElementById('efficiency-bar').style.width = "0%";
-            document.getElementById('sim-clock').textContent = "00:00";
-        });
-
-        document.getElementById('signal-type').addEventListener('change', (e) => {
-            const desc = document.getElementById('strategy-desc');
-            if(e.target.value === 'fixed') {
-                desc.textContent = "Cycle length is constant (10s). Phases do not adjust to real-time demand.";
-            } else {
-                desc.textContent = "Detects queue accumulation. Extends Green time dynamically to clear saturation flows.";
-            }
-        });
 
         lucide.createIcons();
     </script>
