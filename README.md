@@ -37,11 +37,11 @@ A digital twin–based traffic simulator that enables:
 ## 📸 Screenshots
 
 ### Landing Page
-![Landing Page](screenshots/landing.png)
+![Landing Page](s)
 ### Simulator Dashboard
-![Simulator Dashboard]()
+![Simulator Dashboard](Screenshots)
 ### Strategy Memory
-![Strategy Memory](screenshots/strategy-memory.png)
+![Strategy Memory](Screenshots)
 
 ## ⚠️ Disclaimer
 This project is a conceptual simulation tool and does not control real traffic systems.
