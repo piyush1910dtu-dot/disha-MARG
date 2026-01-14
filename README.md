@@ -34,7 +34,14 @@ A digital twin–based traffic simulator that enables:
 4. Performance metrics are stored and compared
 
 ## 🚀 Demo
-(Attach screenshots or demo video link here)
+## 📸 Screenshots
+
+### Landing Page
+![Landing Page](screenshots/landing.png)
+### Simulator Dashboard
+![Simulator Dashboard]()
+### Strategy Memory
+![Strategy Memory](screenshots/strategy-memory.png)
 
 ## ⚠️ Disclaimer
 This project is a conceptual simulation tool and does not control real traffic systems.
